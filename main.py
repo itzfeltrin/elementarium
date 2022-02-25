@@ -1,16 +1,39 @@
-# This is a sample Python script.
+import pygame
+from pygame.locals import *
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from lib.constants import *
+from models.Player import Player
 
+pygame.init()
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+screen = pygame.display.set_mode(SCREEN_SIZE)
 
+all_sprites = pygame.sprite.Group()
+player = Player()
+mobs = pygame.sprite.Group()
+all_sprites.add(player)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+clock = pygame.time.Clock()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+running = True
+while running:
+    clock.tick(30)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+
+    all_sprites.update()
+
+    screen.fill(WHITE)
+    pygame.draw.rect(screen, GREEN, (0, SCREEN_HEIGHT - GROUND_HEIGHT, SCREEN_WIDTH, GROUND_HEIGHT))
+
+    all_sprites.draw(screen)
+
+    pygame.display.flip()
+
+print("Jogo finalizado")
+pygame.quit()
