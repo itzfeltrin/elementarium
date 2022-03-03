@@ -36,7 +36,8 @@ world_data = [
     [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
-world = World(screen, world_data)
+blob_group = pygame.sprite.Group()
+world = World(screen, blob_group, world_data)
 player = Player(screen, world, 100, SCREEN_HEIGHT - (TILE_SIZE + 80))
 
 clock = pygame.time.Clock()
@@ -50,6 +51,9 @@ while running:
     screen.blit(sun_img, (100, 100))
 
     world.draw()
+
+    blob_group.update()
+    blob_group.draw(screen)
 
     player.update()
 

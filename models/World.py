@@ -1,10 +1,11 @@
 import pygame
 from pygame import Surface
+from pygame.sprite import Group
 from lib.constants import TILE_SIZE
-
+from models.Enemy import Enemy
 
 class World:
-    def __init__(self, screen: Surface, data):
+    def __init__(self, screen: Surface, blob_group: Group, data):
         self.screen = screen
         self.tile_list = []
 
@@ -23,13 +24,16 @@ class World:
                     img_rect.y = row_count * TILE_SIZE
                     tile = (img, img_rect)
                     self.tile_list.append(tile)
-                if tile == 2:
+                elif tile == 2:
                     img = pygame.transform.scale(grass_img, (TILE_SIZE, TILE_SIZE))
                     img_rect = img.get_rect()
                     img_rect.x = col_count * TILE_SIZE
                     img_rect.y = row_count * TILE_SIZE
                     tile = (img, img_rect)
                     self.tile_list.append(tile)
+                elif tile == 3:
+                    blob = Enemy(col_count * TILE_SIZE, row_count * TILE_SIZE + 15)
+                    blob_group.add(blob)
                 col_count += 1
             row_count += 1
 
