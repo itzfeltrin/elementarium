@@ -10,3 +10,4 @@ class TileElement(IntEnum):
     DIRT = 1
     GRASS = 2
     ENEMY = 3
+    LAVA = 6

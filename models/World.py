@@ -3,10 +3,11 @@ from pygame import Surface
 from pygame.sprite import Group
 from lib.constants import TILE_SIZE, TileElement
 from models.Enemy import Enemy
+from models.Lava import Lava
 
 
 class World:
-    def __init__(self, screen: Surface, blob_group: Group, data):
+    def __init__(self, screen: Surface, blob_group: Group, lava_group:Group, data):
         self.screen = screen
         self.tile_list = []
 
@@ -35,6 +36,9 @@ class World:
                 elif tile == TileElement.ENEMY:
                     blob = Enemy(col_count * TILE_SIZE, row_count * TILE_SIZE + 15)
                     blob_group.add(blob)
+                elif tile == TileElement.LAVA:
+                    lava = Lava(col_count * TILE_SIZE, row_count * TILE_SIZE + (TILE_SIZE // 2))
+                    lava_group.add(lava)
                 col_count += 1
             row_count += 1
 

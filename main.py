@@ -1,7 +1,7 @@
 import pygame
-from enum import Enum
 from lib.constants import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE
 from models.World import World
+from models.Lava import Lava
 from models.Player import Player
 
 pygame.init()
@@ -36,14 +36,17 @@ world_data = [
     [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
+fps = 60
+game_over = 0
+running = True
+
 blob_group = pygame.sprite.Group()
-world = World(screen, blob_group, world_data)
-player = Player(screen, world, 100, SCREEN_HEIGHT - (TILE_SIZE + 80))
+lava_group = pygame.sprite.Group()
+world = World(screen, blob_group, lava_group, world_data)
+player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80), screen, world, blob_group, lava_group)
 
 clock = pygame.time.Clock()
-fps = 60
 
-running = True
 while running:
     clock.tick(fps)
 
@@ -52,10 +55,14 @@ while running:
 
     world.draw()
 
-    blob_group.update()
+    if game_over == 0:
+        blob_group.update()
     blob_group.draw(screen)
 
-    player.update()
+    lava_group.update()
+    lava_group.draw(screen)
+
+    game_over = player.update(game_over)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
