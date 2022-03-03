@@ -37,10 +37,15 @@ world_data = [
 ]
 
 world = World(screen, world_data)
-player = Player(screen, 100, SCREEN_HEIGHT - (TILE_SIZE + 80))
+player = Player(screen, world, 100, SCREEN_HEIGHT - (TILE_SIZE + 80))
+
+clock = pygame.time.Clock()
+fps = 60
 
 running = True
 while running:
+    clock.tick(fps)
+
     screen.blit(bg_img, (0, 0))
     screen.blit(sun_img, (100, 100))
 
