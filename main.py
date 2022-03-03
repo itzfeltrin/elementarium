@@ -1,4 +1,5 @@
 import pygame
+from enum import Enum
 from lib.constants import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE
 from models.World import World
 from models.Player import Player
@@ -11,7 +12,6 @@ pygame.display.set_caption('Platformer')
 # load images
 sun_img = pygame.image.load('assets/img/sun.png')
 bg_img = pygame.image.load('assets/img/sky.png')
-
 
 world_data = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
