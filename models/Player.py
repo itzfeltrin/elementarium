@@ -29,7 +29,7 @@ class Player:
         self.height = self.image.get_height()
         self.vel_y = 0
         self.jumped = False
-        self.direction = 0
+        self.direction = 1
 
     def update(self, game_over: int):
         dx = 0
