@@ -1,8 +1,8 @@
 import pygame
 from lib.constants import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE
-from models.World import World
-from models.Lava import Lava
-from models.Player import Player
+from models.button import Button
+from models.world import World
+from models.player import Player
 
 pygame.init()
 
@@ -12,6 +12,7 @@ pygame.display.set_caption('Platformer')
 # load images
 sun_img = pygame.image.load('assets/img/sun.png')
 bg_img = pygame.image.load('assets/img/sky.png')
+restart_img = pygame.image.load('assets/img/restart_btn.png')
 
 world_data = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -44,6 +45,7 @@ blob_group = pygame.sprite.Group()
 lava_group = pygame.sprite.Group()
 world = World(screen, blob_group, lava_group, world_data)
 player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80), screen, world, blob_group, lava_group)
+restart_button = Button(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2 + 100, restart_img)
 
 clock = pygame.time.Clock()
 
@@ -63,6 +65,11 @@ while running:
     lava_group.draw(screen)
 
     game_over = player.update(game_over)
+
+    if game_over == -1:
+        if restart_button.draw(screen):
+            player.reset(100, SCREEN_HEIGHT - (TILE_SIZE + 80), screen, world, blob_group, lava_group)
+            game_over = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

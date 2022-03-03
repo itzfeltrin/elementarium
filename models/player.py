@@ -2,34 +2,31 @@ import pygame
 from pygame import Surface
 from pygame.sprite import Group
 from lib.constants import *
-from models.World import World
+from models.world import World
 
 
 class Player:
     def __init__(self, x, y, screen: Surface, world: World, blob_group: Group, lava_group: Group):
-        self.images_right = []
-        self.images_left = []
-        self.index = 0
-        self.counter = 0
-        self.screen = screen
-        self.world = world
-        self.blob_group = blob_group
-        self.lava_group = lava_group
-        for i in range(1, 5):
-            img_right = pygame.transform.scale(pygame.image.load(f'assets/img/guy{i}.png'), (40, 80))
-            img_left = pygame.transform.flip(img_right, True, False)
-            self.images_right.append(img_right)
-            self.images_left.append(img_left)
-        self.dead_image = pygame.image.load('assets/img/ghost.png')
-        self.image = self.images_right[self.index]
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.width = self.image.get_width()
-        self.height = self.image.get_height()
-        self.vel_y = 0
-        self.jumped = False
-        self.direction = 1
+        # initialize all properties as none so pylint doesn't complain about them being defined outside the __init__
+        # method
+        self.images_right = None
+        self.images_left = None
+        self.index = None
+        self.counter = None
+        self.screen = None
+        self.world = None
+        self.blob_group = None
+        self.lava_group = None
+        self.dead_image = None
+        self.image = None
+        self.rect = None
+        self.width = None
+        self.height = None
+        self.vel_y = None
+        self.jumped = None
+        self.direction = None
+        self.in_air = None
+        self.reset(x, y, screen, world, blob_group, lava_group)
 
     def update(self, game_over: int):
         dx = 0
@@ -40,7 +37,7 @@ class Player:
             images = self.images_right if self.direction == 1 else self.images_left
 
             key = pygame.key.get_pressed()
-            if key[pygame.K_SPACE] and self.jumped is False:
+            if key[pygame.K_SPACE] and self.jumped is False and not self.in_air:
                 self.vel_y = -15
                 self.jumped = True
             if key[pygame.K_SPACE] is False:
@@ -71,6 +68,7 @@ class Player:
             dy += self.vel_y
 
             # check for collision
+            self.in_air = True
             for tile in self.world.tile_list:
                 # x direction
                 if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
@@ -85,6 +83,8 @@ class Player:
                     # check if above the ground - falling
                     elif self.vel_y >= 0:
                         dy = tile[1].top - self.rect.bottom
+                        self.vel_y = 0
+                        self.in_air = False
 
             # check for collision with enemies
             if pygame.sprite.spritecollide(self, self.blob_group, False):
@@ -108,3 +108,29 @@ class Player:
         pygame.draw.rect(self.screen, (255, 255, 255), self.rect, 2)
 
         return game_over
+    
+    def reset(self, x, y, screen: Surface, world: World, blob_group: Group, lava_group: Group):
+        self.images_right = []
+        self.images_left = []
+        self.index = 0
+        self.counter = 0
+        self.screen = screen
+        self.world = world
+        self.blob_group = blob_group
+        self.lava_group = lava_group
+        for i in range(1, 5):
+            img_right = pygame.transform.scale(pygame.image.load(f'assets/img/guy{i}.png'), (40, 80))
+            img_left = pygame.transform.flip(img_right, True, False)
+            self.images_right.append(img_right)
+            self.images_left.append(img_left)
+        self.dead_image = pygame.image.load('assets/img/ghost.png')
+        self.image = self.images_right[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.vel_y = 0
+        self.jumped = False
+        self.in_air = True
+        self.direction = 1

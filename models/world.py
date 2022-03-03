@@ -2,8 +2,8 @@ import pygame
 from pygame import Surface
 from pygame.sprite import Group
 from lib.constants import TILE_SIZE, TileElement
-from models.Enemy import Enemy
-from models.Lava import Lava
+from models.enemy import Enemy
+from models.lava import Lava
 
 
 class World:
