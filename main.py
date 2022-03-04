@@ -2,12 +2,15 @@ import pygame
 import pickle
 from os import path
 from engine import screen
-from lib.constants import SCREEN_HEIGHT, TILE_SIZE
+from lib.shared import draw_text, font_score, font
+from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLACK, BLUE, SCREEN_WIDTH
 from ui import start_button, exit_button, restart_button
 from entities.world import world
-from entities.groups import blob_group, lava_group, exit_group
+from entities.groups import blob_group, lava_group, exit_group, coin_group
 from models.world import World
 from models.player import Player
+
+print(pygame.font.get_fonts())
 
 clock = pygame.time.Clock()
 fps = 60
@@ -15,12 +18,15 @@ fps = 60
 # load images
 sun_img = pygame.image.load('assets/img/sun.png')
 bg_img = pygame.image.load('assets/img/sky.png')
+coin_img = pygame.transform.scale(pygame.image.load('assets/img/coin.png'), (TILE_SIZE // 2, TILE_SIZE // 2))
 
+# game variables
 main_menu = True
-game_over = 0
 running = True
+game_over = 0
 level = 1
 max_levels = 7
+score = 0
 
 player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80))
 
@@ -30,6 +36,7 @@ def reset_level(new_level):
     blob_group.empty()
     lava_group.empty()
     exit_group.empty()
+    coin_group.empty()
 
     if path.exists(f'assets/level{new_level}_data') is False:
         return world
@@ -56,21 +63,27 @@ while running:
 
         if game_over == 0:
             blob_group.update()
+            # update score
+            if pygame.sprite.spritecollide(player, coin_group, True):
+                score += 1
+            draw_text(f'X {score}', font_score, BLACK, TILE_SIZE - 10, TILE_SIZE - TILE_SIZE // 2 - 30 / 2)
+
         blob_group.draw(screen)
-
-        lava_group.update()
         lava_group.draw(screen)
-
-        exit_group.update()
         exit_group.draw(screen)
+        coin_group.draw(screen)
+
+        screen.blit(coin_img, (TILE_SIZE // 2 - coin_img.get_width() // 2, TILE_SIZE // 2 - coin_img.get_height() // 2))
 
         game_over = player.update(world.tile_list, game_over)
 
+        # if player has died
         if game_over == -1:
             if restart_button.draw():
                 world_data = []
                 world = reset_level(level)
                 game_over = 0
+                score = 0
         elif game_over == 1:
             level += 1
             if level <= max_levels:
@@ -79,12 +92,14 @@ while running:
                 world = reset_level(level)
                 game_over = 0
             else:
+                draw_text('YOU WIN!', font, BLUE, (SCREEN_WIDTH // 2) - 140, SCREEN_HEIGHT // 2)
                 if restart_button.draw():
                     level = 0
                     # reset level
                     world_data = []
                     world = reset_level(level)
                     game_over = 0
+                    score = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

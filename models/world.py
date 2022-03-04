@@ -1,10 +1,11 @@
 import pygame
 from engine import screen
-from entities.groups import blob_group, lava_group, exit_group
+from entities.groups import blob_group, lava_group, exit_group, coin_group
 from lib.constants import TILE_SIZE, TileElement
 from models.enemy import Enemy
 from models.lava import Lava
 from models.exit import Exit
+from models.coin import Coin
 
 
 class World:
@@ -39,6 +40,9 @@ class World:
                 elif tile == TileElement.LAVA:
                     lava = Lava(col_count * TILE_SIZE, row_count * TILE_SIZE + (TILE_SIZE // 2))
                     lava_group.add(lava)
+                elif tile == TileElement.COIN:
+                    coin = Coin(col_count * (TILE_SIZE // 2), row_count * TILE_SIZE + (TILE_SIZE // 2))
+                    coin_group.add(coin)
                 elif tile == TileElement.EXIT:
                     exit_gate = Exit(col_count * TILE_SIZE, row_count * TILE_SIZE - (TILE_SIZE // 2))
                     exit_group.add(exit_gate)

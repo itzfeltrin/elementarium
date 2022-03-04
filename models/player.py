@@ -1,5 +1,7 @@
 import pygame
 from engine import screen
+from lib.shared import draw_text, font
+from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT
 from entities.groups import blob_group, lava_group, exit_group
 
 
@@ -100,6 +102,7 @@ class Player:
 
         elif game_over == -1:
             self.image = self.dead_image
+            draw_text('GAME OVER!', font, BLUE, (SCREEN_WIDTH // 2) - 200, SCREEN_HEIGHT // 2)
             if self.rect.y > 200:
                 self.rect.y -= 5
 
