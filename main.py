@@ -22,7 +22,7 @@ coin_img = pygame.transform.scale(pygame.image.load('assets/img/coin.png'), (TIL
 main_menu = True
 running = True
 game_over = 0
-level = 3
+level = 0
 max_levels = 7
 score = 0
 

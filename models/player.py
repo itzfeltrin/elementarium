@@ -2,7 +2,7 @@ import pygame
 from engine import screen
 from lib.shared import draw_text, font, jump_fx, game_over_fx
 from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT
-from entities.groups import blob_group, lava_group, exit_group
+from entities.groups import blob_group, lava_group, exit_group, platform_group
 
 
 class Player:
@@ -29,13 +29,14 @@ class Player:
         dx = 0
         dy = 0
         walk_cooldown = 5
+        collision_threshold = 20
 
         if game_over == 0:
             images = self.images_right if self.direction == 1 else self.images_left
 
             key = pygame.key.get_pressed()
-            # if key[pygame.K_SPACE] and self.jumped is False and not self.in_air:
-            if key[pygame.K_SPACE] and self.jumped is False:
+            # if key[pygame.K_SPACE] and self.jumped is False:
+            if key[pygame.K_SPACE] and self.jumped is False and not self.in_air:
                 jump_fx.play()
                 self.vel_y = -15
                 self.jumped = True
@@ -99,6 +100,25 @@ class Player:
             if pygame.sprite.spritecollide(self, exit_group, False):
                 game_over = 1
 
+            # check for collision with platforms
+            for platform in platform_group:
+                # x direction
+                if platform.rect.colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
+                    dx = 0
+                # y direction
+                if platform.rect.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+                    # check if below platform
+                    if abs(self.rect.top + dy - platform.rect.bottom) < collision_threshold:
+                        self.vel_y = 0
+                        dy = platform.rect.bottom - self.rect.top
+                    # check if above platform
+                    elif abs(self.rect.bottom + dy - platform.rect.top) < collision_threshold:
+                        self.rect.bottom = platform.rect.top - 1
+                        self.in_air = False
+                        dy = 0
+                    # move sideways with platform
+                    if platform.move_x != 0:
+                        self.rect.x += platform.move_direction
             # update player pos
             self.rect.x += dx
             self.rect.y += dy
@@ -111,7 +131,6 @@ class Player:
 
         # draw player
         screen.blit(self.image, self.rect)
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         return game_over
 
