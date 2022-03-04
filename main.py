@@ -2,7 +2,7 @@ import pygame
 import pickle
 from os import path
 from engine import screen
-from lib.shared import draw_text, font_score, font
+from lib.shared import draw_text, font_score, font, coin_fx
 from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLACK, BLUE, SCREEN_WIDTH
 from ui import start_button, exit_button, restart_button
 from entities.world import world
@@ -66,6 +66,7 @@ while running:
             # update score
             if pygame.sprite.spritecollide(player, coin_group, True):
                 score += 1
+                coin_fx.play()
             draw_text(f'X {score}', font_score, BLACK, TILE_SIZE - 10, TILE_SIZE - TILE_SIZE // 2 - 30 / 2)
 
         blob_group.draw(screen)

@@ -1,6 +1,6 @@
 import pygame
 from engine import screen
-from lib.shared import draw_text, font
+from lib.shared import draw_text, font, jump_fx, game_over_fx
 from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT
 from entities.groups import blob_group, lava_group, exit_group
 
@@ -36,6 +36,7 @@ class Player:
             key = pygame.key.get_pressed()
             # if key[pygame.K_SPACE] and self.jumped is False and not self.in_air:
             if key[pygame.K_SPACE] and self.jumped is False:
+                jump_fx.play()
                 self.vel_y = -15
                 self.jumped = True
             if key[pygame.K_SPACE] is False:
@@ -87,10 +88,12 @@ class Player:
             # check for collision with enemies
             if pygame.sprite.spritecollide(self, blob_group, False):
                 game_over = -1
+                game_over_fx.play()
 
             # check for collision with lava
             if pygame.sprite.spritecollide(self, lava_group, False):
                 game_over = -1
+                game_over_fx.play()
 
             # check for collision with exit gates
             if pygame.sprite.spritecollide(self, exit_group, False):
