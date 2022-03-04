@@ -41,7 +41,7 @@ class World:
                     lava = Lava(col_count * TILE_SIZE, row_count * TILE_SIZE + (TILE_SIZE // 2))
                     lava_group.add(lava)
                 elif tile == TileElement.COIN:
-                    coin = Coin(col_count * (TILE_SIZE // 2), row_count * TILE_SIZE + (TILE_SIZE // 2))
+                    coin = Coin(col_count * TILE_SIZE + (TILE_SIZE // 2), row_count * TILE_SIZE + (TILE_SIZE // 2))
                     coin_group.add(coin)
                 elif tile == TileElement.EXIT:
                     exit_gate = Exit(col_count * TILE_SIZE, row_count * TILE_SIZE - (TILE_SIZE // 2))
