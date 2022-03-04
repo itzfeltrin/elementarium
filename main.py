@@ -79,8 +79,12 @@ while running:
                 world = reset_level(level)
                 game_over = 0
             else:
-                # restart game
-                pass
+                if restart_button.draw():
+                    level = 0
+                    # reset level
+                    world_data = []
+                    world = reset_level(level)
+                    game_over = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
