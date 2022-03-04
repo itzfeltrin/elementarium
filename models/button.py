@@ -1,5 +1,6 @@
 import pygame
 from pygame import Surface
+from engine import screen
 
 
 class Button:
@@ -10,7 +11,7 @@ class Button:
         self.rect.y = y
         self.clicked = False
 
-    def draw(self, screen: Surface):
+    def draw(self):
         action = False
 
         # get mouse position

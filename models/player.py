@@ -1,22 +1,17 @@
 import pygame
-from pygame import Surface
-from pygame.sprite import Group
-from lib.constants import *
-from models.world import World
+from engine import screen
+from entities.groups import blob_group, lava_group, exit_group
 
 
 class Player:
-    def __init__(self, x, y, screen: Surface, world: World, blob_group: Group, lava_group: Group):
+    # Feel like this is poorly structured
+    def __init__(self, x, y):
         # initialize all properties as none so pylint doesn't complain about them being defined outside the __init__
         # method
         self.images_right = None
         self.images_left = None
         self.index = None
         self.counter = None
-        self.screen = None
-        self.world = None
-        self.blob_group = None
-        self.lava_group = None
         self.dead_image = None
         self.image = None
         self.rect = None
@@ -26,9 +21,9 @@ class Player:
         self.jumped = None
         self.direction = None
         self.in_air = None
-        self.reset(x, y, screen, world, blob_group, lava_group)
+        self.reset(x, y)
 
-    def update(self, game_over: int):
+    def update(self, tile_list: int, game_over: int):
         dx = 0
         dy = 0
         walk_cooldown = 5
@@ -37,7 +32,8 @@ class Player:
             images = self.images_right if self.direction == 1 else self.images_left
 
             key = pygame.key.get_pressed()
-            if key[pygame.K_SPACE] and self.jumped is False and not self.in_air:
+            # if key[pygame.K_SPACE] and self.jumped is False and not self.in_air:
+            if key[pygame.K_SPACE] and self.jumped is False:
                 self.vel_y = -15
                 self.jumped = True
             if key[pygame.K_SPACE] is False:
@@ -69,7 +65,7 @@ class Player:
 
             # check for collision
             self.in_air = True
-            for tile in self.world.tile_list:
+            for tile in tile_list:
                 # x direction
                 if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
                     dx = 0
@@ -87,12 +83,16 @@ class Player:
                         self.in_air = False
 
             # check for collision with enemies
-            if pygame.sprite.spritecollide(self, self.blob_group, False):
+            if pygame.sprite.spritecollide(self, blob_group, False):
                 game_over = -1
 
             # check for collision with lava
-            if pygame.sprite.spritecollide(self, self.lava_group, False):
+            if pygame.sprite.spritecollide(self, lava_group, False):
                 game_over = -1
+
+            # check for collision with exit gates
+            if pygame.sprite.spritecollide(self, exit_group, False):
+                game_over = 1
 
             # update player pos
             self.rect.x += dx
@@ -104,20 +104,16 @@ class Player:
                 self.rect.y -= 5
 
         # draw player
-        self.screen.blit(self.image, self.rect)
-        pygame.draw.rect(self.screen, (255, 255, 255), self.rect, 2)
+        screen.blit(self.image, self.rect)
+        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         return game_over
-    
-    def reset(self, x, y, screen: Surface, world: World, blob_group: Group, lava_group: Group):
+
+    def reset(self, x, y):
         self.images_right = []
         self.images_left = []
         self.index = 0
         self.counter = 0
-        self.screen = screen
-        self.world = world
-        self.blob_group = blob_group
-        self.lava_group = lava_group
         for i in range(1, 5):
             img_right = pygame.transform.scale(pygame.image.load(f'assets/img/guy{i}.png'), (40, 80))
             img_left = pygame.transform.flip(img_right, True, False)

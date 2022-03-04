@@ -1,14 +1,14 @@
 import pygame
-from pygame import Surface
-from pygame.sprite import Group
+from engine import screen
+from entities.groups import blob_group, lava_group, exit_group
 from lib.constants import TILE_SIZE, TileElement
 from models.enemy import Enemy
 from models.lava import Lava
+from models.exit import Exit
 
 
 class World:
-    def __init__(self, screen: Surface, blob_group: Group, lava_group:Group, data):
-        self.screen = screen
+    def __init__(self, data):
         self.tile_list = []
 
         # load images
@@ -39,10 +39,13 @@ class World:
                 elif tile == TileElement.LAVA:
                     lava = Lava(col_count * TILE_SIZE, row_count * TILE_SIZE + (TILE_SIZE // 2))
                     lava_group.add(lava)
+                elif tile == TileElement.EXIT:
+                    exit_gate = Exit(col_count * TILE_SIZE, row_count * TILE_SIZE - (TILE_SIZE // 2))
+                    exit_group.add(exit_gate)
                 col_count += 1
             row_count += 1
 
     def draw(self):
         for tile in self.tile_list:
-            self.screen.blit(tile[0], tile[1])
-            pygame.draw.rect(self.screen, (255, 255, 255), tile[1], 2)
+            screen.blit(tile[0], tile[1])
+            pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)

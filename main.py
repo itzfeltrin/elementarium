@@ -1,49 +1,44 @@
 import pygame
-from lib.constants import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, WORLD_DATA
-from models.button import Button
+import pickle
+from os import path
+from engine import screen
+from lib.constants import SCREEN_HEIGHT, TILE_SIZE
+from ui import start_button, exit_button, restart_button
+from entities.world import world
+from entities.groups import blob_group, lava_group, exit_group
 from models.world import World
 from models.player import Player
 
-pygame.init()
-
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Platformer')
+clock = pygame.time.Clock()
+fps = 60
 
 # load images
 sun_img = pygame.image.load('assets/img/sun.png')
 bg_img = pygame.image.load('assets/img/sky.png')
-restart_img = pygame.image.load('assets/img/restart_btn.png')
-start_img = pygame.image.load('assets/img/start_btn.png')
-exit_img = pygame.image.load('assets/img/exit_btn.png')
 
-fps = 60
 main_menu = True
 game_over = 0
 running = True
+level = 1
+max_levels = 7
 
-blob_group = pygame.sprite.Group()
-lava_group = pygame.sprite.Group()
-world = World(screen, blob_group, lava_group, WORLD_DATA)
-player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80), screen, world, blob_group, lava_group)
+player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80))
 
-# create buttons
-restart_button = Button(
-    SCREEN_WIDTH // 2 - restart_img.get_width() // 2,
-    SCREEN_HEIGHT // 2 - restart_img.get_height() // 2,
-    restart_img
-)
-start_button = Button(
-    SCREEN_WIDTH // 2 - start_img.get_width() // 2 - start_img.get_width() // 1.5,
-    SCREEN_HEIGHT // 2 - start_img.get_height() // 2,
-    start_img
-)
-exit_button = Button(
-    SCREEN_WIDTH // 2 - exit_img.get_width() // 2 + exit_img.get_width() // 1.5,
-    SCREEN_HEIGHT // 2 - exit_img.get_height() // 2,
-    exit_img
-)
 
-clock = pygame.time.Clock()
+# function to reset level
+def reset_level(new_level):
+    blob_group.empty()
+    lava_group.empty()
+    exit_group.empty()
+
+    if path.exists(f'assets/level{new_level}_data') is False:
+        return world
+
+    pickle_in = open(f'assets/level{new_level}_data', 'rb')
+    new_world_data = pickle.load(pickle_in)
+    player.reset(100, SCREEN_HEIGHT - (TILE_SIZE + 80))
+    return World(new_world_data)
+
 
 while running:
     clock.tick(fps)
@@ -52,9 +47,9 @@ while running:
     screen.blit(sun_img, (100, 100))
 
     if main_menu is True:
-        if exit_button.draw(screen):
+        if exit_button.draw():
             running = False
-        if start_button.draw(screen):
+        if start_button.draw():
             main_menu = False
     else:
         world.draw()
@@ -66,12 +61,26 @@ while running:
         lava_group.update()
         lava_group.draw(screen)
 
-        game_over = player.update(game_over)
+        exit_group.update()
+        exit_group.draw(screen)
+
+        game_over = player.update(world.tile_list, game_over)
 
         if game_over == -1:
-            if restart_button.draw(screen):
-                player.reset(100, SCREEN_HEIGHT - (TILE_SIZE + 80), screen, world, blob_group, lava_group)
+            if restart_button.draw():
+                world_data = []
+                world = reset_level(level)
                 game_over = 0
+        elif game_over == 1:
+            level += 1
+            if level <= max_levels:
+                # reset level
+                world_data = []
+                world = reset_level(level)
+                game_over = 0
+            else:
+                # restart game
+                pass
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
