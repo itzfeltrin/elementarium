@@ -1,11 +1,12 @@
 import pygame
 from engine import screen
-from entities.groups import blob_group, lava_group, exit_group, coin_group
+from entities.groups import blob_group, lava_group, exit_group, coin_group, platform_group
 from lib.constants import TILE_SIZE, TileElement
 from models.enemy import Enemy
 from models.lava import Lava
 from models.exit import Exit
 from models.coin import Coin
+from models.platform import Platform
 
 
 class World:
@@ -37,6 +38,12 @@ class World:
                 elif tile == TileElement.ENEMY:
                     blob = Enemy(col_count * TILE_SIZE, row_count * TILE_SIZE + 15)
                     blob_group.add(blob)
+                elif tile == TileElement.HORIZONTAL_PLATFORM:
+                    platform = Platform(col_count * TILE_SIZE, row_count * TILE_SIZE, 1, 0)
+                    platform_group.add(platform)
+                elif tile == TileElement.VERTICAL_PLATFORM:
+                    platform = Platform(col_count * TILE_SIZE, row_count * TILE_SIZE, 0, 1)
+                    platform_group.add(platform)
                 elif tile == TileElement.LAVA:
                     lava = Lava(col_count * TILE_SIZE, row_count * TILE_SIZE + (TILE_SIZE // 2))
                     lava_group.add(lava)

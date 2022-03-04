@@ -6,11 +6,9 @@ from lib.shared import draw_text, font_score, font, coin_fx
 from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLACK, BLUE, SCREEN_WIDTH
 from ui import start_button, exit_button, restart_button
 from entities.world import world
-from entities.groups import blob_group, lava_group, exit_group, coin_group
+from entities.groups import blob_group, lava_group, exit_group, coin_group, platform_group
 from models.world import World
 from models.player import Player
-
-print(pygame.font.get_fonts())
 
 clock = pygame.time.Clock()
 fps = 60
@@ -24,7 +22,7 @@ coin_img = pygame.transform.scale(pygame.image.load('assets/img/coin.png'), (TIL
 main_menu = True
 running = True
 game_over = 0
-level = 1
+level = 3
 max_levels = 7
 score = 0
 
@@ -34,6 +32,7 @@ player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80))
 # function to reset level
 def reset_level(new_level):
     blob_group.empty()
+    platform_group.empty()
     lava_group.empty()
     exit_group.empty()
     coin_group.empty()
@@ -63,6 +62,7 @@ while running:
 
         if game_over == 0:
             blob_group.update()
+            platform_group.update()
             # update score
             if pygame.sprite.spritecollide(player, coin_group, True):
                 score += 1
@@ -70,6 +70,7 @@ while running:
             draw_text(f'X {score}', font_score, BLACK, TILE_SIZE - 10, TILE_SIZE - TILE_SIZE // 2 - 30 / 2)
 
         blob_group.draw(screen)
+        platform_group.draw(screen)
         lava_group.draw(screen)
         exit_group.draw(screen)
         coin_group.draw(screen)

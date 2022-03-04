@@ -10,4 +10,4 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Platformer')
 
 pygame.mixer.music.load('assets/img/music.wav')
-pygame.mixer.music.play(-1, 0.0, 5000)
+# pygame.mixer.music.play(-1, 0.0, 5000)

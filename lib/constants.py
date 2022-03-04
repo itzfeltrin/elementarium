@@ -14,6 +14,8 @@ class TileElement(IntEnum):
     DIRT = 1
     GRASS = 2
     ENEMY = 3
+    VERTICAL_PLATFORM = 4
+    HORIZONTAL_PLATFORM = 5
     LAVA = 6
     COIN = 7
     EXIT = 8
