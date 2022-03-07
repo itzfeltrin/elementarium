@@ -1,7 +1,9 @@
+import os
+
 import pygame
 from engine import screen
 from lib.shared import draw_text, font, jump_fx, game_over_fx
-from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT
+from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT, PlayerVariant
 from entities.groups import blob_group, lava_group, exit_group, platform_group
 
 
@@ -23,7 +25,9 @@ class Player:
         self.jumped = None
         self.direction = None
         self.in_air = None
-        self.reset(x, y)
+        # inicializando como None tava dando erro
+        self.player_variant = PlayerVariant.NORMAL
+        self.reset(x, y, PlayerVariant.NORMAL)
 
     def update(self, tile_list: int, game_over: int):
         dx = 0
@@ -131,16 +135,21 @@ class Player:
 
         # draw player
         screen.blit(self.image, self.rect)
+        # pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         return game_over
 
-    def reset(self, x, y):
+    def reset(self, x, y, player_variant):
         self.images_right = []
         self.images_left = []
         self.index = 0
         self.counter = 0
-        for i in range(1, 5):
-            img_right = pygame.transform.scale(pygame.image.load(f'assets/img/guy{i}.png'), (40, 80))
+        asset_folder = 'assets/img/player'
+        # existem 3 estados de imagem para cada personagem
+        for i in range(0, 3):
+            img = pygame.image.load(os.path.join(asset_folder, f'{self.player_variant}-{i}.png')).convert_alpha()
+            sprite_img = img.subsurface(230, 200, 420, 570)
+            img_right = pygame.transform.scale(sprite_img, (50, 68))
             img_left = pygame.transform.flip(img_right, True, False)
             self.images_right.append(img_right)
             self.images_left.append(img_left)
@@ -155,3 +164,4 @@ class Player:
         self.jumped = False
         self.in_air = True
         self.direction = 1
+        self.player_variant = player_variant

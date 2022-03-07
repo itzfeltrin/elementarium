@@ -1,4 +1,5 @@
 from enum import IntEnum
+from strenum import StrEnum
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 1000
@@ -19,4 +20,11 @@ class TileElement(IntEnum):
     LAVA = 6
     COIN = 7
     EXIT = 8
-    
+
+
+class PlayerVariant(StrEnum):
+    NORMAL = 'normal',
+    DIRT = 'dirt',
+    ICE = 'ice',
+    FIRE = 'fire',
+
