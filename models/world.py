@@ -1,3 +1,5 @@
+import os
+
 import pygame
 from engine import screen
 from entities.groups import blob_group, lava_group, exit_group, coin_group, platform_group
@@ -13,23 +15,43 @@ class World:
     def __init__(self, data):
         self.tile_list = []
 
+
         # load images
-        dirt_img = pygame.image.load('assets/img/dirt.png')
-        grass_img = pygame.image.load('assets/img/grass.png')
+        tiles_folder = 'assets/img/tiles'
+
+        dirt_left_img = pygame.image.load(os.path.join(tiles_folder, '8.png'))
+        dirt_right_img = pygame.image.load(os.path.join(tiles_folder, '10.png'))
+        dirt_center_img = pygame.image.load(os.path.join(tiles_folder, '5.png'))
+        grass_left_corner_img = pygame.image.load(os.path.join(tiles_folder, '1.png'))
+        grass_right_corner_img = pygame.image.load(os.path.join(tiles_folder, '3.png'))
+        grass_center_img = pygame.image.load('assets/img/tiles/2.png')
 
         row_count = 0
         for row in data:
             col_count = 0
             for tile in row:
                 if tile == TileElement.DIRT:
-                    img = pygame.transform.scale(dirt_img, (TILE_SIZE, TILE_SIZE))
+                    # if data[row_count][col_count - 1] == 0 and data[row_count - 1][col_count] != 0:
+                    if data[row_count - 1][col_count] == TileElement.GRASS and data[row_count][col_count - 1] == TileElement.GRASS and data[row_count - 1][col_count - 1] != TileElement.GRASS:
+                        img = pygame.transform.scale(dirt_left_img, (TILE_SIZE, TILE_SIZE))
+                    elif data[row_count - 1][col_count] == TileElement.GRASS and data[row_count][col_count + 1] == TileElement.GRASS:
+                        img = pygame.transform.scale(dirt_right_img, (TILE_SIZE, TILE_SIZE))
+                    elif data[row_count - 1][col_count - 1] == TileElement.GRASS:
+                        img = pygame.transform.scale(dirt_center_img, (TILE_SIZE, TILE_SIZE))
+                    else:
+                        img = pygame.transform.scale(dirt_center_img, (TILE_SIZE, TILE_SIZE))
                     img_rect = img.get_rect()
                     img_rect.x = col_count * TILE_SIZE
                     img_rect.y = row_count * TILE_SIZE
                     tile = (img, img_rect)
                     self.tile_list.append(tile)
                 elif tile == TileElement.GRASS:
-                    img = pygame.transform.scale(grass_img, (TILE_SIZE, TILE_SIZE))
+                    if data[row_count][col_count - 1] == 0 and data[row_count][col_count + 1] != 0:
+                        img = pygame.transform.scale(grass_left_corner_img, (TILE_SIZE, TILE_SIZE))
+                    elif data[row_count][col_count + 1] == 0 and data[row_count][col_count - 1] != 0:
+                        img = pygame.transform.scale(grass_right_corner_img, (TILE_SIZE, TILE_SIZE))
+                    else:
+                        img = pygame.transform.scale(grass_center_img, (TILE_SIZE, TILE_SIZE))
                     img_rect = img.get_rect()
                     img_rect.x = col_count * TILE_SIZE
                     img_rect.y = row_count * TILE_SIZE

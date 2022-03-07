@@ -1,10 +1,14 @@
+import os
+
 import pygame
 from models.button import Button
 from lib.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
-restart_img = pygame.image.load('assets/img/restart_btn.png')
-start_img = pygame.image.load('assets/img/start_btn.png')
-exit_img = pygame.image.load('assets/img/exit_btn.png')
+buttons_folder = 'assets/img/buttons'
+
+restart_img = pygame.image.load(os.path.join(buttons_folder, 'restart_btn.png'))
+start_img = pygame.image.load(os.path.join(buttons_folder, 'start_btn.png'))
+exit_img = pygame.image.load(os.path.join(buttons_folder, 'exit_btn.png'))
 
 # create buttons
 restart_button = Button(

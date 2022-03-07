@@ -1,9 +1,11 @@
+import random
+
 import pygame
 import pickle
 from os import path
 from engine import screen
 from lib.shared import draw_text, font_score, font, coin_fx
-from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLACK, BLUE, SCREEN_WIDTH
+from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLACK, BLUE, SCREEN_WIDTH, PlayerVariant
 from ui import start_button, exit_button, restart_button
 from entities.world import world
 from entities.groups import blob_group, lava_group, exit_group, coin_group, platform_group
@@ -14,8 +16,7 @@ clock = pygame.time.Clock()
 fps = 60
 
 # load images
-sun_img = pygame.image.load('assets/img/sun.png')
-bg_img = pygame.image.load('assets/img/sky.png')
+bg_imgs = list(map(lambda i: pygame.image.load(f'assets/img/bg/{i}.png'), range(0, 4)))
 coin_img = pygame.transform.scale(pygame.image.load('assets/img/coin.png'), (TILE_SIZE // 2, TILE_SIZE // 2))
 
 # game variables
@@ -25,6 +26,7 @@ game_over = 0
 level = 0
 max_levels = 7
 score = 0
+current_bg = random.randint(0, 3)
 
 player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80))
 
@@ -42,15 +44,14 @@ def reset_level(new_level):
 
     pickle_in = open(f'assets/level{new_level}_data', 'rb')
     new_world_data = pickle.load(pickle_in)
-    player.reset(100, SCREEN_HEIGHT - (TILE_SIZE + 80))
+    player.reset(100, SCREEN_HEIGHT - (TILE_SIZE + 80), PlayerVariant.FIRE)
     return World(new_world_data)
 
 
 while running:
     clock.tick(fps)
 
-    screen.blit(bg_img, (0, 0))
-    screen.blit(sun_img, (100, 100))
+    screen.blit(bg_imgs[current_bg], (0, 0))
 
     if main_menu is True:
         if exit_button.draw():
@@ -88,6 +89,7 @@ while running:
                 score = 0
         elif game_over == 1:
             level += 1
+            current_bg = random.randint(0, 3)
             if level <= max_levels:
                 # reset level
                 world_data = []
