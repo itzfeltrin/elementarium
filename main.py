@@ -4,11 +4,11 @@ import pygame
 import pickle
 from os import path
 from engine import screen
-from lib.shared import draw_text, font_score, font, coin_fx
-from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLACK, BLUE, SCREEN_WIDTH, PlayerVariant
+from lib.shared import draw_text, font
+from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLUE, SCREEN_WIDTH, PlayerVariant
 from ui import start_button, exit_button, restart_button
 from entities.world import world
-from entities.groups import blob_group, lava_group, exit_group, coin_group, platform_group
+from entities.groups import blob_group, lava_group, exit_group, platform_group
 from models.world import World
 from models.player import Player
 
@@ -16,8 +16,7 @@ clock = pygame.time.Clock()
 fps = 60
 
 # load images
-bg_imgs = list(map(lambda i: pygame.image.load(f'assets/img/bg/{i}.png'), range(0, 4)))
-coin_img = pygame.transform.scale(pygame.image.load('assets/img/coin.png'), (TILE_SIZE // 2, TILE_SIZE // 2))
+bg_img = pygame.transform.scale(pygame.image.load('assets/img/bg/4.jpg').convert(), (SCREEN_WIDTH * 2, SCREEN_HEIGHT))
 
 # game variables
 main_menu = True
@@ -26,7 +25,6 @@ game_over = 0
 level = 0
 max_levels = 7
 score = 0
-current_bg = random.randint(0, 3)
 
 player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80))
 
@@ -37,7 +35,6 @@ def reset_level(new_level):
     platform_group.empty()
     lava_group.empty()
     exit_group.empty()
-    coin_group.empty()
 
     if path.exists(f'assets/level{new_level}_data') is False:
         return world
@@ -51,7 +48,7 @@ def reset_level(new_level):
 while running:
     clock.tick(fps)
 
-    screen.blit(bg_imgs[current_bg], (0, 0))
+    screen.blit(bg_img, (0, 0))
 
     if main_menu is True:
         if exit_button.draw():
@@ -64,19 +61,11 @@ while running:
         if game_over == 0:
             blob_group.update()
             platform_group.update()
-            # update score
-            if pygame.sprite.spritecollide(player, coin_group, True):
-                score += 1
-                coin_fx.play()
-            draw_text(f'X {score}', font_score, BLACK, TILE_SIZE - 10, TILE_SIZE - TILE_SIZE // 2 - 30 / 2)
 
         blob_group.draw(screen)
         platform_group.draw(screen)
         lava_group.draw(screen)
         exit_group.draw(screen)
-        coin_group.draw(screen)
-
-        screen.blit(coin_img, (TILE_SIZE // 2 - coin_img.get_width() // 2, TILE_SIZE // 2 - coin_img.get_height() // 2))
 
         game_over = player.update(world.tile_list, game_over)
 
@@ -89,7 +78,6 @@ while running:
                 score = 0
         elif game_over == 1:
             level += 1
-            current_bg = random.randint(0, 3)
             if level <= max_levels:
                 # reset level
                 world_data = []

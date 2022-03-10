@@ -9,7 +9,7 @@ clock = pygame.time.Clock()
 fps = 60
 
 #game window
-tile_size = 50
+tile_size = 40
 cols = 20
 margin = 100
 screen_width = tile_size * cols
@@ -20,20 +20,16 @@ pygame.display.set_caption('Level Editor')
 
 
 #load images
-sun_img = pygame.image.load('img/sun.png')
-sun_img = pygame.transform.scale(sun_img, (tile_size, tile_size))
-bg_img = pygame.image.load('img/sky.png')
-bg_img = pygame.transform.scale(bg_img, (screen_width, screen_height - margin))
-dirt_img = pygame.image.load('img/dirt.png')
-grass_img = pygame.image.load('img/grass.png')
+dirt_img = pygame.image.load('img/tiles/5.png')
+grass_img = pygame.image.load('img/tiles/3.png')
 blob_img = pygame.image.load('img/blob.png')
-platform_x_img = pygame.image.load('img/platform_x.png')
-platform_y_img = pygame.image.load('img/platform_y.png')
+platform_x_img = pygame.image.load('img/tiles/platform_x.png')
+platform_y_img = pygame.image.load('img/tiles/platform_y.png')
 lava_img = pygame.image.load('img/lava.png')
 coin_img = pygame.image.load('img/coin.png')
 exit_img = pygame.image.load('img/exit.png')
-save_img = pygame.image.load('img/save_btn.png')
-load_img = pygame.image.load('img/load_btn.png')
+save_img = pygame.image.load('img/buttons/save_btn.png')
+load_img = pygame.image.load('img/buttons/load_btn.png')
 
 
 #define game variables
@@ -150,8 +146,6 @@ while run:
 
 	#draw background
 	screen.fill(green)
-	screen.blit(bg_img, (0, 0))
-	screen.blit(sun_img, (tile_size * 2, tile_size * 2))
 
 	#load and save level
 	if save_button.draw():
