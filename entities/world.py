@@ -2,7 +2,7 @@ from os import path
 import pickle
 from models.world import World
 
-level = 0
+level = 1
 
 # load in level data and create world
 if path.exists(f'assets/level{level}_data'):

@@ -3,17 +3,16 @@ import os
 import pygame
 from engine import screen
 from lib.shared import draw_text, font, jump_fx, game_over_fx
-from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT, PlayerVariant
-from entities.groups import blob_group, lava_group, exit_group, platform_group
+from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT
+from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group
 
 
 class Player:
     # Feel like this is poorly structured
-    def __init__(self, x, y):
+    def __init__(self, x, y, element='normal'):
         # initialize all properties as none so pylint doesn't complain about them being defined outside the __init__
         # method
-        self.images_right = None
-        self.images_left = None
+        self.images = None
         self.index = None
         self.counter = None
         self.dead_image = None
@@ -25,9 +24,9 @@ class Player:
         self.jumped = None
         self.direction = None
         self.in_air = None
-        # inicializando como None tava dando erro
-        self.player_variant = PlayerVariant.NORMAL
-        self.reset(x, y, PlayerVariant.NORMAL)
+        self.element = None
+        print(f"from init {element}")
+        self.reset(x, y, element)
 
     def update(self, tile_list: int, game_over: int):
         dx = 0
@@ -36,15 +35,14 @@ class Player:
         collision_threshold = 20
 
         if game_over == 0:
-            images = self.images_right if self.direction == 1 else self.images_left
+            images = self.images[self.element][1] if self.direction == 1 else self.images[self.element][0]
 
             key = pygame.key.get_pressed()
-            # if key[pygame.K_SPACE] and self.jumped is False:
-            if key[pygame.K_SPACE] and self.jumped is False and not self.in_air:
+            if key[pygame.K_UP] and self.jumped is False and not self.in_air:
                 jump_fx.play()
                 self.vel_y = -15
                 self.jumped = True
-            if key[pygame.K_SPACE] is False:
+            if key[pygame.K_UP] is False:
                 self.jumped = False
             if key[pygame.K_LEFT]:
                 dx -= 5
@@ -101,7 +99,7 @@ class Player:
                 game_over_fx.play()
 
             # check for collision with exit gates
-            if pygame.sprite.spritecollide(self, exit_group, False):
+            if pygame.sprite.spritecollide(self, exit_group, False) and self.element != 'normal':
                 game_over = 1
 
             # check for collision with platforms
@@ -123,6 +121,12 @@ class Player:
                     # move sideways with platform
                     if platform.move_x != 0:
                         self.rect.x += platform.move_direction
+
+            # check for collision with elements
+            for element in element_group:
+                if element.rect.colliderect(self.rect.x, self.rect.y, self.width, self.height):
+                    if pygame.key.get_pressed()[pygame.K_e]:
+                        self.element = element.name
             # update player pos
             self.rect.x += dx
             self.rect.y += dy
@@ -139,22 +143,27 @@ class Player:
 
         return game_over
 
-    def reset(self, x, y, player_variant):
-        self.images_right = []
-        self.images_left = []
+    def reset(self, x, y, element):
         self.index = 0
         self.counter = 0
         asset_folder = 'assets/img/player'
-        # existem 3 estados de imagem para cada personagem
-        for i in range(0, 3):
-            img = pygame.image.load(os.path.join(asset_folder, f'{self.player_variant}-{i}.png')).convert_alpha()
-            sprite_img = img.subsurface(230, 200, 420, 570)
-            img_right = pygame.transform.scale(sprite_img, (50, 68))
-            img_left = pygame.transform.flip(img_right, True, False)
-            self.images_right.append(img_right)
-            self.images_left.append(img_left)
-        self.dead_image = pygame.image.load('assets/img/ghost.png')
-        self.image = self.images_right[self.index]
+        # existem 4 estados de imagem para cada personagem
+        elements = ['normal', 'fire', 'water', 'nature']
+        player_images = {}
+        for element_name in elements:
+            temp_images = ([], [])
+            for i in range(0, 3):
+                img = pygame.image.load(os.path.join(asset_folder, f'{element_name}-{i}.png')).convert_alpha()
+                sprite_img = img.subsurface(230, 200, 420, 570)
+                img_right = pygame.transform.scale(sprite_img, (50, 68))
+                img_left = pygame.transform.flip(img_right, True, False)
+                temp_images[0].append(img_left)
+                temp_images[1].append(img_right)
+            player_images[element_name] = temp_images
+        self.images = player_images
+        self.dead_image = pygame.image.load('assets/img/elements/ghost.png')
+        self.element = element
+        self.image = self.images[self.element][1][self.index]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -165,4 +174,3 @@ class Player:
         self.jumped = False
         self.in_air = True
         self.direction = 1
-        self.player_variant = player_variant

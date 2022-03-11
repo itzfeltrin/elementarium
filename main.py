@@ -5,28 +5,29 @@ import pickle
 from os import path
 from engine import screen
 from lib.shared import draw_text, font
-from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLUE, SCREEN_WIDTH, PlayerVariant
+from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLUE, SCREEN_WIDTH
 from ui import start_button, exit_button, restart_button
 from entities.world import world
-from entities.groups import blob_group, lava_group, exit_group, platform_group
+from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group
 from models.world import World
 from models.player import Player
+from models.element import Element
 
 clock = pygame.time.Clock()
 fps = 60
 
 # load images
-bg_img = pygame.transform.scale(pygame.image.load('assets/img/bg/4.jpg').convert(), (SCREEN_WIDTH * 2, SCREEN_HEIGHT))
+bg_img = pygame.transform.scale(pygame.image.load('assets/img/bg/0.jpg').convert(), (SCREEN_WIDTH * 2, SCREEN_HEIGHT))
 
 # game variables
 main_menu = True
 running = True
 game_over = 0
-level = 0
+level = 1
 max_levels = 7
 score = 0
 
-player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80))
+player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80), 'normal')
 
 
 # function to reset level
@@ -41,9 +42,15 @@ def reset_level(new_level):
 
     pickle_in = open(f'assets/level{new_level}_data', 'rb')
     new_world_data = pickle.load(pickle_in)
-    player.reset(100, SCREEN_HEIGHT - (TILE_SIZE + 80), PlayerVariant.FIRE)
+    player.reset(100, SCREEN_HEIGHT - (TILE_SIZE + 80), player.element)
     return World(new_world_data)
 
+
+# create elements
+element_names = ['fire', 'water', 'nature']
+for index, element_name in enumerate(element_names):
+    element = Element(element_name, index)
+    element_group.add(element)
 
 while running:
     clock.tick(fps)
@@ -66,6 +73,7 @@ while running:
         platform_group.draw(screen)
         lava_group.draw(screen)
         exit_group.draw(screen)
+        element_group.draw(screen)
 
         game_over = player.update(world.tile_list, game_over)
 
@@ -77,6 +85,8 @@ while running:
                 game_over = 0
                 score = 0
         elif game_over == 1:
+            if level == 1:
+                element_group.empty()
             level += 1
             if level <= max_levels:
                 # reset level

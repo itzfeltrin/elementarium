@@ -21,9 +21,3 @@ class TileElement(IntEnum):
     EXIT = 8
 
 
-class PlayerVariant(StrEnum):
-    NORMAL = 'normal',
-    DIRT = 'dirt',
-    ICE = 'ice',
-    FIRE = 'fire',
-
