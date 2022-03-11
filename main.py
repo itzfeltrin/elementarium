@@ -25,8 +25,7 @@ main_menu = True
 running = True
 game_over = 0
 level = 1
-max_levels = 7
-score = 0
+max_levels = 8
 
 player = Player(100, SCREEN_HEIGHT - (TILE_SIZE + 80), 'normal')
 
@@ -48,10 +47,13 @@ def reset_level(new_level):
 
 
 # create elements
-element_names = ['fire', 'water', 'nature']
-for index, element_name in enumerate(element_names):
-    element = Element(element_name, index)
-    element_group.add(element)
+def reset_elements():
+    element_names = ['fire', 'water', 'nature']
+    for index, element_name in enumerate(element_names):
+        element = Element(element_name, index)
+        element_group.add(element)
+
+reset_elements()
 
 while running:
     clock.tick(fps)
@@ -85,6 +87,11 @@ while running:
 
         game_over = player.update(world.tile_list, game_over)
 
+        level_img = font_60.render(
+            f"Level {level}", True,
+            (255, 255, 255))
+        screen.blit(level_img, (TILE_SIZE, 0))
+
         if level == 1:
             tutorial_text_img_1 = font_60.render(
                 "Use as setas para se mover", True,
@@ -105,12 +112,11 @@ while running:
                 world_data = []
                 world = reset_level(level)
                 game_over = 0
-                score = 0
         elif game_over == 1:
             if level == 1:
                 element_group.empty()
-            level += 1
-            if level <= max_levels:
+            if level + 1 <= max_levels:
+                level += 1
                 # reset level
                 world_data = []
                 world = reset_level(level)
@@ -122,12 +128,12 @@ while running:
                 screen.blit(you_win_img_shadow, (you_win_img_pos[0] + 4, you_win_img_pos[1] + 4))
                 screen.blit(you_win_img, you_win_img_pos)
                 if restart_button.draw():
-                    level = 0
+                    level = 1
                     # reset level
                     world_data = []
                     world = reset_level(level)
+                    reset_elements()
                     game_over = 0
-                    score = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
