@@ -1,5 +1,4 @@
 from enum import IntEnum
-from strenum import StrEnum
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 1000

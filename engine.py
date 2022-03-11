@@ -7,7 +7,7 @@ mixer.init()
 pygame.init()
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Platformer')
+pygame.display.set_caption('Elementarium')
 
 pygame.mixer.music.load('assets/sound/music.wav')
 pygame.mixer.music.play(-1, 0.0, 5000)

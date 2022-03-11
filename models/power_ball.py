@@ -16,6 +16,7 @@ for element_name in elements:
     explosion_fx.set_volume(0.5)
     sounds[element_name] = explosion_fx
 
+
 class Power(pygame.sprite.Sprite):
     def __init__(self, element, x, y, direction):
         pygame.sprite.Sprite.__init__(self)
