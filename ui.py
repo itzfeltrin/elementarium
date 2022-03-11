@@ -13,7 +13,7 @@ exit_img = pygame.image.load(os.path.join(buttons_folder, 'exit_btn.png'))
 # create buttons
 restart_button = Button(
     SCREEN_WIDTH // 2 - restart_img.get_width() // 2,
-    SCREEN_HEIGHT // 2 - restart_img.get_height() // 2,
+    SCREEN_HEIGHT * 0.6,
     restart_img
 )
 start_button = Button(

@@ -1,11 +1,9 @@
-import random
-
 import pygame
 import pickle
 from os import path
 from engine import screen
-from lib.shared import draw_text, font
-from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLUE, SCREEN_WIDTH
+from lib.constants import SCREEN_HEIGHT, TILE_SIZE, SCREEN_WIDTH
+from lib.shared import font_120, center_pos, font_60
 from ui import start_button, exit_button, restart_button
 from entities.world import world
 from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group, power_group, \
@@ -19,7 +17,6 @@ fps = 60
 
 # load images
 bg_img = pygame.transform.scale(pygame.image.load('assets/img/bg/0.jpg').convert(), (SCREEN_WIDTH * 2, SCREEN_HEIGHT))
-you_win_img = pygame.image.load('assets/img/elements/you-win.png').convert_alpha()
 
 # game variables
 main_menu = True
@@ -83,6 +80,20 @@ while running:
 
         game_over = player.update(world.tile_list, game_over)
 
+        if level == 1:
+            tutorial_text_img_1 = font_60.render(
+                "Use as setas para se mover", True,
+                (31, 23, 0))
+            tutorial_text_img_2 = font_60.render(
+                "E para selecionar um elemento", True,
+                (31, 23, 0))
+            tutorial_text_img_3 = font_60.render(
+                "Espaço para atirar", True,
+                (31, 23, 0))
+            screen.blit(tutorial_text_img_1, (TILE_SIZE * 2, TILE_SIZE * 2))
+            screen.blit(tutorial_text_img_2, (TILE_SIZE * 2, TILE_SIZE * 3))
+            screen.blit(tutorial_text_img_3, (TILE_SIZE * 2, TILE_SIZE * 4))
+
         # if player has died
         if game_over == -1:
             if restart_button.draw():
@@ -100,8 +111,11 @@ while running:
                 world = reset_level(level)
                 game_over = 0
             else:
-                screen.blit(you_win_img, (SCREEN_WIDTH // 2 - you_win_img.get_width() // 2,
-                                          SCREEN_HEIGHT // 2 - you_win_img.get_height() // 2))
+                you_win_img = font_120.render("YOU WIN !!", True, (255, 186, 3))
+                you_win_img_pos = (center_pos(you_win_img))
+                you_win_img_shadow = font_120.render("YOU WIN !!", True, (31, 23, 0))
+                screen.blit(you_win_img_shadow, (you_win_img_pos[0] + 4, you_win_img_pos[1] + 4))
+                screen.blit(you_win_img, you_win_img_pos)
                 if restart_button.draw():
                     level = 0
                     # reset level

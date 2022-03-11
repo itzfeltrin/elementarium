@@ -2,12 +2,9 @@ import os
 
 import pygame
 from engine import screen
-from lib.shared import draw_text, font, jump_fx, game_over_fx
-from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT
+from lib.shared import font_120, jump_fx, game_over_fx, draw_text, center_pos
 from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group, power_group
 from models.power_ball import Power
-
-game_over_img = pygame.image.load('assets/img/elements/game-over.png').convert_alpha()
 
 
 class Player:
@@ -142,8 +139,11 @@ class Player:
 
         elif game_over == -1:
             self.image = self.dead_image
-            screen.blit(game_over_img, (SCREEN_WIDTH // 2 - game_over_img.get_width() // 2, SCREEN_HEIGHT // 2 - game_over_img.get_height() // 2))
-            # draw_text('GAME OVER!', font, BLUE, (SCREEN_WIDTH // 2) - 200, SCREEN_HEIGHT // 2)
+            game_over_img = font_120.render("GAME OVER !!", True, (255, 255, 255))
+            game_over_img_pos = (center_pos(game_over_img))
+            game_over_img_shadow = font_120.render("GAME OVER !!", True, (31, 23, 0))
+            screen.blit(game_over_img_shadow, (game_over_img_pos[0] + 4, game_over_img_pos[1] + 4))
+            screen.blit(game_over_img, center_pos(game_over_img))
             if self.rect.y > 200:
                 self.rect.y -= 5
 
