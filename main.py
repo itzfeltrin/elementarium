@@ -8,7 +8,7 @@ from lib.shared import draw_text, font
 from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLUE, SCREEN_WIDTH
 from ui import start_button, exit_button, restart_button
 from entities.world import world
-from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group
+from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group, power_group
 from models.world import World
 from models.player import Player
 from models.element import Element
@@ -74,6 +74,8 @@ while running:
         lava_group.draw(screen)
         exit_group.draw(screen)
         element_group.draw(screen)
+        power_group.update()
+        power_group.draw(screen)
 
         game_over = player.update(world.tile_list, game_over)
 

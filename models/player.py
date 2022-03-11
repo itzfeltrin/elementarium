@@ -4,7 +4,8 @@ import pygame
 from engine import screen
 from lib.shared import draw_text, font, jump_fx, game_over_fx
 from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT
-from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group
+from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group, power_group
+from models.power_ball import Power
 
 
 class Player:
@@ -25,6 +26,7 @@ class Player:
         self.direction = None
         self.in_air = None
         self.element = None
+        self.shooting = None
         print(f"from init {element}")
         self.reset(x, y, element)
 
@@ -56,6 +58,12 @@ class Player:
                 self.counter = 0
                 self.index = 0
                 self.image = images[self.index]
+
+            if key[pygame.K_SPACE] and self.element != 'normal' and self.shooting is False:
+                power_group.add(Power(self.element, self.rect.left if self.direction == -1 else self.rect.right, self.rect.centery, self.direction))
+                self.shooting = True
+            if key[pygame.K_SPACE] is False and self.shooting:
+                self.shooting = False
 
             if self.counter > walk_cooldown:
                 self.counter = 0
@@ -174,3 +182,4 @@ class Player:
         self.jumped = False
         self.in_air = True
         self.direction = 1
+        self.shooting = False
