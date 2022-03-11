@@ -17,6 +17,8 @@ fps = 60
 
 # load images
 bg_img = pygame.transform.scale(pygame.image.load('assets/img/bg/0.jpg').convert(), (SCREEN_WIDTH * 2, SCREEN_HEIGHT))
+ifrs_img = pygame.image.load('assets/img/elements/ifrs.png').convert_alpha()
+cc_img = pygame.image.load('assets/img/elements/computacao.png').convert_alpha()
 
 # game variables
 main_menu = True
@@ -57,6 +59,9 @@ while running:
     screen.blit(bg_img, (0, 0))
 
     if main_menu is True:
+        screen.blit(cc_img, (SCREEN_WIDTH - TILE_SIZE * 2, TILE_SIZE))
+        screen.blit(ifrs_img, (SCREEN_WIDTH - TILE_SIZE * 4, TILE_SIZE))
+
         if exit_button.draw():
             running = False
         if start_button.draw():
