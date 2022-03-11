@@ -1,7 +1,8 @@
 import pygame
 
 # load power images
-from entities.groups import blob_group, platform_group
+from models.explosion import Explosion
+from entities.groups import blob_group, platform_group, explosion_group
 from lib.constants import SCREEN_WIDTH, TILE_SIZE
 
 elements = ['fire', 'water', 'nature']
@@ -26,6 +27,7 @@ class Power(pygame.sprite.Sprite):
 
     def explode(self):
         sounds[self.element].play()
+        explosion_group.add(Explosion(self.rect.centerx, self.rect.centery))
         self.kill()
 
     def update(self, tile_list):

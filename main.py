@@ -8,7 +8,8 @@ from lib.shared import draw_text, font
 from lib.constants import SCREEN_HEIGHT, TILE_SIZE, BLUE, SCREEN_WIDTH
 from ui import start_button, exit_button, restart_button
 from entities.world import world
-from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group, power_group
+from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group, power_group, \
+    explosion_group
 from models.world import World
 from models.player import Player
 from models.element import Element
@@ -18,6 +19,7 @@ fps = 60
 
 # load images
 bg_img = pygame.transform.scale(pygame.image.load('assets/img/bg/0.jpg').convert(), (SCREEN_WIDTH * 2, SCREEN_HEIGHT))
+you_win_img = pygame.image.load('assets/img/elements/you-win.png').convert_alpha()
 
 # game variables
 main_menu = True
@@ -76,6 +78,8 @@ while running:
         element_group.draw(screen)
         power_group.update(world.tile_list)
         power_group.draw(screen)
+        explosion_group.update()
+        explosion_group.draw(screen)
 
         game_over = player.update(world.tile_list, game_over)
 
@@ -96,7 +100,8 @@ while running:
                 world = reset_level(level)
                 game_over = 0
             else:
-                draw_text('YOU WIN!', font, BLUE, (SCREEN_WIDTH // 2) - 140, SCREEN_HEIGHT // 2)
+                screen.blit(you_win_img, (SCREEN_WIDTH // 2 - you_win_img.get_width() // 2,
+                                          SCREEN_HEIGHT // 2 - you_win_img.get_height() // 2))
                 if restart_button.draw():
                     level = 0
                     # reset level
