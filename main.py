@@ -74,7 +74,7 @@ while running:
         lava_group.draw(screen)
         exit_group.draw(screen)
         element_group.draw(screen)
-        power_group.update()
+        power_group.update(world.tile_list)
         power_group.draw(screen)
 
         game_over = player.update(world.tile_list, game_over)

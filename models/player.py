@@ -7,6 +7,8 @@ from lib.constants import BLUE, SCREEN_WIDTH, SCREEN_HEIGHT
 from entities.groups import blob_group, lava_group, exit_group, platform_group, element_group, power_group
 from models.power_ball import Power
 
+game_over_img = pygame.image.load('assets/img/elements/game-over.png').convert_alpha()
+
 
 class Player:
     # Feel like this is poorly structured
@@ -27,7 +29,6 @@ class Player:
         self.in_air = None
         self.element = None
         self.shooting = None
-        print(f"from init {element}")
         self.reset(x, y, element)
 
     def update(self, tile_list: int, game_over: int):
@@ -141,7 +142,8 @@ class Player:
 
         elif game_over == -1:
             self.image = self.dead_image
-            draw_text('GAME OVER!', font, BLUE, (SCREEN_WIDTH // 2) - 200, SCREEN_HEIGHT // 2)
+            screen.blit(game_over_img, (SCREEN_WIDTH // 2 - game_over_img.get_width() // 2, SCREEN_HEIGHT // 2 - game_over_img.get_height() // 2))
+            # draw_text('GAME OVER!', font, BLUE, (SCREEN_WIDTH // 2) - 200, SCREEN_HEIGHT // 2)
             if self.rect.y > 200:
                 self.rect.y -= 5
 
