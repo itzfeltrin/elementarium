@@ -57,7 +57,7 @@ class World:
                     tile = (img, img_rect)
                     self.tile_list.append(tile)
                 elif tile == TileElement.ENEMY:
-                    blob = Enemy(col_count * TILE_SIZE, row_count * TILE_SIZE + 15)
+                    blob = Enemy(col_count * TILE_SIZE, row_count * TILE_SIZE - 15)
                     blob_group.add(blob)
                 elif tile == TileElement.HORIZONTAL_PLATFORM:
                     platform = Platform(col_count * TILE_SIZE, row_count * TILE_SIZE, 1, 0)
